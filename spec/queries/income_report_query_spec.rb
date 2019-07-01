@@ -4,7 +4,6 @@ RSpec.describe IncomeReportQuery do
   let!(:user) { create(:user) }
 
   describe '#resolve' do
-    let(:test_scope) { instance_double(ActiveRecord::Relation) }
     let(:result) { query.resolve }
 
     context 'filtering by nothing' do
