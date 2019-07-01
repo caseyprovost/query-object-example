@@ -1,4 +1,4 @@
-class IncomeTransactionsQuery
+class IncomeReportQuery
   attr_reader :relation
   attr_reader :filters
 
@@ -8,7 +8,7 @@ class IncomeTransactionsQuery
   end
 
   def resolve
-    scope = relation.completed.not_refunded
+    scope = relation.have_income
     return scope.distinct if filters.empty?
 
     apply_filter(scope, :start_date)
@@ -27,15 +27,15 @@ class IncomeTransactionsQuery
   end
 
   def filter_by_start_date(scope, value)
-    scope.where(created_at: value.to_datetime.beginning_of_day)
+    scope.where('created_at >= ?', value.to_datetime.beginning_of_day)
   end
 
   def filter_by_end_date(scope, value)
-    scope.where(created_at: value.to_datetime.end_of_day)
+    scope.where('created_at <= ?', value.to_datetime.end_of_day)
   end
 
   def filter_by_user_status(scope, value)
-    scope.joins(:user).where(user: { status: value })
+    scope.joins(:user).where(users: { status: value })
   end
 
   def filter_by_amount(scope, value)
@@ -43,6 +43,6 @@ class IncomeTransactionsQuery
   end
 
   def filter_by_user_id(scope, value)
-    scope.joins(:user).where(user: { id: value })
+    scope.joins(:user).where(users: { id: value })
   end
 end
